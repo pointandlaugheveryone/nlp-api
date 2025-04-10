@@ -59,13 +59,11 @@ public class Data
 
         for (int i = 1; i <= 220; i++)
         {
-            // Read one JSON line from the dataset
             string jsonPath = $"/home/roni/repos/CVtesting/datajson/{i}.json";
             using StreamReader sr = new(jsonPath);
             string jsonString = sr.ReadLine()!;
             Resume inputData = JsonConvert.DeserializeObject<Resume>(jsonString)!;
 
-            // Create a Document object for each file
             Document doc = new()
             {
                 location = $"{i}.txt",
@@ -73,7 +71,7 @@ public class Data
                 entities = []
             };
 
-            foreach (var annotation in inputData.annotation)
+            foreach (var annotation in inputData.annotation) // labels -> document object
             {
                 foreach (var point in annotation.points)
                 {

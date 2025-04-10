@@ -21,7 +21,7 @@ public class NERaccess
         return key;
     }
 
-    public static async Task GetSkills(string text)
+    public static async Task<List<string>> GetSkills(string text)
     {
         string endpoint = "https://nerbutbetter.cognitiveservices.azure.com/";
         string key = GetKey().Result;
@@ -29,6 +29,8 @@ public class NERaccess
         var client = new TextAnalyticsClient(new Uri(endpoint), new Azure.AzureKeyCredential(key));
         string projectName = "CV_NER";
         string deploymentName = "NERskills";
+
+        List<string> resultSkills = [];
 
         List<string> documents = [];
         documents.Add(text);
@@ -43,30 +45,24 @@ public class NERaccess
         await operation.WaitForCompletionAsync();
 
         // https://github.com/Azure/azure-sdk-for-net/blob/Azure.AI.TextAnalytics_5.2.0-beta.3/sdk/textanalytics/Azure.AI.TextAnalytics/samples/Sample9_RecognizeCustomEntities.md
+        // I know. Disgusting code.
         await foreach (AnalyzeActionsResult documentsResult in operation.Value)
         {
             IReadOnlyCollection<RecognizeCustomEntitiesActionResult> customEntitiesActionResults = documentsResult.RecognizeCustomEntitiesResults;
             foreach (RecognizeCustomEntitiesActionResult customEntitiesActionResult in customEntitiesActionResults)
             {
-                Console.WriteLine($" Action name: {customEntitiesActionResult.ActionName}");
-                int docNumber = 1;
                 foreach (RecognizeEntitiesResult documentResults in customEntitiesActionResult.DocumentsResults)
                 {
-                    Console.WriteLine($" Document #{docNumber++}");
-                    Console.WriteLine($"  Recognized the following {documentResults.Entities.Count} entities:");
-
                     foreach (CategorizedEntity entity in documentResults.Entities)
                     {
-                        Console.WriteLine($"  Entity: {entity.Text}");
-                        Console.WriteLine($"  Category: {entity.Category}");
-                        Console.WriteLine($"  Offset: {entity.Offset}");
-                        Console.WriteLine($"  Length: {entity.Length}");
-                        Console.WriteLine($"  ConfidenceScore: {entity.ConfidenceScore}");
-                        Console.WriteLine($"  SubCategory: {entity.SubCategory}");
+                        resultSkills.Add($"{entity.Text},{entity.Category}, {entity.ConfidenceScore}");
+                        foreach (var skill in resultSkills) {
+                            Console.WriteLine(skill);
+                        }
                     }
-                    Console.WriteLine("\n");
                 }
             }
         }
+        return resultSkills;
     }
 }

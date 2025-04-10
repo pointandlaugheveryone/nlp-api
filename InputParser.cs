@@ -16,10 +16,10 @@ public class InputParser {
         {
             string elementText = string.Join("", element.Descendants<Text>().Select(t => t.Text)); 
             if (!string.IsNullOrWhiteSpace(elementText)) { segments.Add(elementText); }
-            else { segments.Add("|"); }  // empty cells or lines used for formatting
+            else { segments.Add(" "); }  // empty cells or lines used for formatting
         }
 
-        string text = string.Join("|", segments);
+        string text = string.Join(" ", segments);
 
         if (text.Length < 50)
         {
