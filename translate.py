@@ -5,9 +5,9 @@ import asyncio
 
 
 def get_key(keyname: str):
-    kvname = 'cvbutbetter'
-    kvuri = f'https://{kvname}.vault.azure.net'
-    client = azk.SecretClient(kvuri, DefaultAzureCredential())
+    vault_name = 'cvbutbetter'
+    vault_uri = f'https://{vault_name}.vault.azure.net'
+    client = azk.SecretClient(vault_uri, DefaultAzureCredential())
     secret = client.get_secret(keyname)
     key = secret.value
     return key
@@ -50,15 +50,13 @@ async def azure_translate(text:str):
         newf.write(response[0]["translations"][0]["text"])
    
 
-   
-
 async def main():
     data = parse_files()
     while data != []:
         for i in range(5):
             await azure_translate(data.pop(i))
         print('timeout')
-        time.sleep(60)
+        time.sleep(100)
         
 
 asyncio.run(main())
