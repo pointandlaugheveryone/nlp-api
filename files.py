@@ -1,14 +1,22 @@
 # used to move data from a different location
 
-import os
+import os, csv, io
 
 
-path = '/home/ronji/repos/nlp-api/data_src/'
-contents = []
-dir = os.listdir('/home/ronji/repos/nlp-api/data_src/')
-for f in dir:
-    with open(os.path.join(path,f),'r') as file:
-        contents.append(file.read())
-with open('/home/ronji/repos/nlp-api/data.txt','a') as newfile:
-    newfile.writelines(contents)
-        
+def txt_to_csv():
+    path ='/home/ronji/repos/nlp-api/data_cs/'
+    with open('/home/ronji/repos/nlp-api/resumes_cs.csv', 'w', encoding='UTF8') as csv_file:
+        writer = csv.writer(csv_file)
+        writer.writerow(["id", "contents"])
+        for f in os.listdir(path):
+            with open(os.path.join(path,f),'r') as file:
+                line = [file.name,file.read()]
+                writer.writerow(line)
+
+
+txt_to_csv()
+    
+    
+    
+
+    
