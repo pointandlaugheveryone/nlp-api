@@ -1,0 +1,65 @@
+import requests, uuid, time, os
+from azure.identity import DefaultAzureCredential
+import azure.keyvault.secrets as azk
+import asyncio
+
+
+def get_key(keyname: str):
+    kvname = 'cvbutbetter'
+    kvuri = f'https://{kvname}.vault.azure.net'
+    client = azk.SecretClient(kvuri, DefaultAzureCredential())
+    secret = client.get_secret(keyname)
+    key = secret.value
+    return key
+
+
+def parse_files():
+    dir_path = '/home/ronji/repos/nlp-api/data_src'
+    texts_en = []
+    for filename in os.listdir(dir_path):
+        filepath = os.path.join(dir_path, filename)
+        with open(filepath, 'r', encoding='utf-8') as file:
+            texts_en.append(file.read())
+    return texts_en
+
+
+async def azure_translate(text:str):
+    resource_key = get_key('translate')
+    resource_loc = 'germanywestcentral' # resource 
+    endpoint = 'https://api.cognitive.microsofttranslator.com'
+    path = '/translate?api-version=3.0'
+    params = '&from=en&to=cs'
+    constructed_url = endpoint + path + params
+    headers = {
+        'Ocp-Apim-Subscription-Key': resource_key,
+        'Ocp-Apim-Subscription-Region': resource_loc,
+        'Content-type': 'application/json',
+        'X-ClientTraceId': str(uuid.uuid4())
+    }
+    body = [{ 'text' : text }]
+    request = requests.post(constructed_url, headers=headers, json=body)
+
+    if request.status_code != 200:
+        print(f"Error: {request.status_code}")
+        print(request.text)
+        return
+    
+    response = request.json()   
+    fileid = str(uuid.uuid4())
+    with open(f'/home/ronji/repos/nlp-api/data_cs/{fileid}.txt','w') as newf:
+        newf.write(response[0]["translations"][0]["text"])
+   
+
+   
+
+async def main():
+    data = parse_files()
+    while data != []:
+        for i in range(5):
+            await azure_translate(data.pop(i))
+        print('timeout')
+        time.sleep(60)
+        
+
+asyncio.run(main())
+ 
