@@ -1,7 +1,8 @@
 from openai import AzureOpenAI
 import azure.keyvault.secrets as azk
 from azure.identity import DefaultAzureCredential
-import os,json, asyncio
+import os, asyncio
+from pydantic import json
 from NERtemplate import NamedEntities
 
 
@@ -29,11 +30,12 @@ async def make_request(data:str):
             {
                 "role": "user",
                 "content": """You are a Named Entity Recognition (NER) assistant.
-                Your job is to identify and return all entity names and their types for a given piece of text. 
+                Your job is to identify and return all entities and their text contents as they are (including phrases), for a given piece of text. 
                 The input will always be in the czech language.
                 You are to strictly conform only to the following entity types: 
                 softSkill, domainSpecificSkill, personalityTrait and jobTitle. 
                 If uncertain about entity type or start/end index, ignore it or leave blank.
+                Score (0 to 1) should express how much you think the label fits the entityName's meaning.
                 In the respective text fields, fill in the original text without any changes.""",
             },
             {
@@ -41,17 +43,20 @@ async def make_request(data:str):
                 "content": data,
             }
         ],
-        response_format=NamedEntities,# TODO
+        response_format=NamedEntities,
         n=1,
         temperature=0,
         
     )
-    response = completion.choices[0].message.parsed
-    print(response)
+    response_str = str(completion.choices[0].message.parsed)
+    print(response_str)
+
+    response = NamedEntities.parse_raw(response_str)
 
 
 async def main():
-    with open('/home/ronji/repos/nlp-api/data_cs/0a5653a1-9f75-4c01-a3d6-f13e58d1d928.txt','r') as f:
+    file_UUID = '0a5653a1-9f75-4c01-a3d6-f13e58d1d928' # test requests (output1.txt)
+    with open(f'{os.getcwd()}/data_cs/{file_UUID}.txt','r') as f:
         text = f.read()
     await make_request(text)
 

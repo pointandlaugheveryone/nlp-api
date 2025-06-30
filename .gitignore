@@ -1,5 +1,4 @@
 apienv/
 data_src/
 data_cs/
-__pycache__
-dump.txt
+__pycache__/

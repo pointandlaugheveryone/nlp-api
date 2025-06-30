@@ -14,7 +14,7 @@ def get_key(keyname: str):
 
 
 def parse_files():
-    dir_path = '/home/ronji/repos/nlp-api/data_src'
+    dir_path = f'{os.getcwd()}/data_src'
     texts_en = []
     filenames = []
     for filename in os.listdir(dir_path):
@@ -47,7 +47,7 @@ async def azure_translate(text:str,filename:str):
     
     response = request.json()   
     fileid = str(uuid.uuid4())
-    with open(f'/home/ronji/repos/nlp-api/data_cs_2/{fileid}.txt','w') as newf:
+    with open(f'{os.getcwd()}/{fileid}.txt','w') as newf:
         newf.write(response[0]["translations"][0]["text"])
    
 

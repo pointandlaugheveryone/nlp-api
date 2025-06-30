@@ -17,7 +17,6 @@ class Label(BaseModel):
    label: EntityType
 
 class NamedEntities(BaseModel):
-   data: str
    predictions: List[Label]
 
 

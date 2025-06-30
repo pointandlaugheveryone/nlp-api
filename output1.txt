@@ -1,0 +1,51 @@
+TODO: fix formatting issues
+
+{
+    predictions=[
+        Label(
+            start=0, end=11, score=0.8, 
+            text='Zdvořilý a spolehlivý prodejní pracovník', 
+            label=<EntityType.jobtitle: 'JOBTITLE'>), 
+
+        label(
+            start=12, end=36, score=0.7, 
+            text='Efektivně buduje loajalitu a dlouhodobé vztahy se zákazníky', 
+            label=<EntityType.softSkill: 'SOFTSKILL'>),
+        
+        Label(
+            start=37, end=50, score=0.6, 
+            text='Prodejní cíle', 
+            label=<EntityType.domainSpecificSkill: 'DOMAIN_SKILL'>), 
+
+        label(
+            start=51, end=66, score=0.7, 
+            text='Vynikající komunikační dovednosti', 
+            label=<EntityType.softSkill: 'SOFTSKILL'>),
+
+        Label(
+            start=67, end=78, score=0.6, 
+            text='Spolehlivost', 
+            label=<EntityType.personality_trait: 'PERSONALITY_TRAIT'>), 
+
+        Label(
+            start=79, end=94, score=0.7, 
+            text='Školení a rozvoj zaměstnanců', 
+        label=<EntityType.domainSpecificSkill: 'DOMAIN_SKILL'>
+        ), 
+
+        Label(start=95, end=113, score=0.6, 
+        text='Vynikající organizační schopnosti', 
+        label=<EntityType.softSkill: 'SOFTSKILL'>
+        ), 
+
+        Label(start=114, end=132, score=0.6, 
+        text='Interpersonální schopnosti', 
+        label=<EntityType.softSkill: 'SOFTSKILL'>
+        ), 
+
+        Label(start=133, end=147, score=0.6, 
+        text='Iniciativa a řešení problémů', 
+        label=<EntityType.softSkill: 'SOFTSKILL'>
+        )
+    ]
+}
