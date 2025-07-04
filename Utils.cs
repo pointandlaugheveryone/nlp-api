@@ -1,4 +1,6 @@
 using System.Text.RegularExpressions;
+using Azure.Identity;
+using Azure.Security.KeyVault.Secrets;
 
 
 namespace CVtesting;
@@ -20,5 +22,17 @@ public static class Utils {
         results["linkedin"] = linkedinRegex.Match(text).Value;
         
         return results;
-    }  // TODO: !if results[thing] == string.empty : display alert to user to add it
+    }  
+
+    public static async Task<String> GetKey(string keyName) // get key for a deployed service
+    {
+        var kvName = "CVbutbetter";
+        var kvUri = $"https://{kvName}.vault.azure.net";
+
+        var client = new SecretClient(new Uri(kvUri), new DefaultAzureCredential());
+        var secret = await client.GetSecretAsync(keyName);
+        string key = secret.Value.Value;
+
+        return key;
+    }
 }

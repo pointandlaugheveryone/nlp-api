@@ -1,10 +1,7 @@
-test.docx
+test.txt
 /bin
 /obj
-/datajson
-dataset_raw.json
-/DATASET
-labeltemplate.json
 .vscode/
 /csv
+Resume.csv
 notes.md

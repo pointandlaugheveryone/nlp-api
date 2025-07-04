@@ -3,7 +3,7 @@ using DocumentFormat.OpenXml.Packaging;
 
 namespace CVtesting;
 
-public class InputParser {
+public class InputParsing { // TODO: support pdf parsing
     
     public static string ExtractTextFromDocx(string filePath)
     {
@@ -23,7 +23,7 @@ public class InputParser {
 
         if (text.Length < 50)
         {
-            throw new Exception("Parsing function failed - Obscure formatting");
+            throw new Exception("Parsing failed");
         }
 
         return text;
