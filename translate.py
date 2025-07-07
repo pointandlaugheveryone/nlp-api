@@ -47,8 +47,10 @@ async def azure_translate(text:str,filename:str):
     
     response = request.json()   
     fileid = str(uuid.uuid4())
-    with open(f'{os.getcwd()}/{fileid}.txt','w') as newf:
+    with open(f'{os.getcwd()}/data_cs/{fileid}.txt','w') as newf:
         newf.write(response[0]["translations"][0]["text"])
+    return response[0]["translations"][0]["text"]
+    
    
 
 async def main():
