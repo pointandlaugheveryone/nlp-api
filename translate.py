@@ -25,7 +25,7 @@ def parse_files():
     return texts_en, filenames
 
 
-async def azure_translate(text:str,filename:str):
+async def azure_translate(text:str,filename_id:str):
     resource_key = get_key('translationKey')
     resource_loc = 'germanywestcentral' # resource 
     endpoint = 'https://api.cognitive.microsofttranslator.com'
@@ -42,18 +42,17 @@ async def azure_translate(text:str,filename:str):
     request = requests.post(constructed_url, headers=headers, json=body)
 
     if request.status_code != 200:
-        print(f"Error: {request.status_code}, {filename}, {request.text}")
+        print(f"Error: {request.status_code}, {filename_id}.txt, {request.text}")
         return 
     
     response = request.json()   
-    fileid = str(uuid.uuid4())
-    with open(f'{os.getcwd()}/data_cs/{fileid}.txt','w') as newf:
+    with open(f'{os.getcwd()}/data_cs/{filename_id}.txt','w') as newf:
         newf.write(response[0]["translations"][0]["text"])
-    return response[0]["translations"][0]["text"]
+    #return response[0]["translations"][0]["text"]
     
    
 
-async def main():
+'''async def main():
     data,filenames = parse_files()
     while data != []:
         for i in range(5):
@@ -62,5 +61,5 @@ async def main():
         time.sleep(100)
         
 
-asyncio.run(main())
+asyncio.run(main())'''
  

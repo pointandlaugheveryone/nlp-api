@@ -2,7 +2,7 @@ from openai import AzureOpenAI
 import azure.keyvault.secrets as azk
 from azure.identity import DefaultAzureCredential
 import os, asyncio, json, time
-from data_models import Labels
+from data_models2 import Labels
 from label_models import Label, Document
 from translate import azure_translate
 
@@ -15,8 +15,8 @@ def get_key(keyname):
     return key
 
 
-async def send_request(filename:str):
-    with open(f'{os.getcwd()}/data_src/{filename}','r') as f:
+async def send_request(filepath:str):
+    with open(filepath,'r') as f:
         contents = f.read().replace("\n", " ").replace("\t", " ").replace("\r", " ")
 
     key = get_key('openai-key')
@@ -50,7 +50,7 @@ async def send_request(filename:str):
     
     message = completion.choices[0].message
     if (message.refusal):
-        print(f'error in request at file {filename}:\n{message.refusal}\n\n{message}')
+        print(f'error in request at file {filepath}:\n{message.refusal}\n\n{message}')
         return 0
     else:
         labels = Labels.model_validate(message.parsed).model_dump()['Entities']
@@ -76,23 +76,37 @@ def format_entities(doc_contents:str,labels_list:list,doc_id:int=0):
     
 
 async def main():
-    for i in range(331,2456):
+        #TODO:delete section before
+    for i in range(342,2456):
         with open(f'{os.getcwd()}/data_src/{i}.txt','r') as f:
             text_en = f.read()
-            await azure_translate(text_en,f'{i}.txt')
-            print('translation of file {i} okay')
-            time.sleep(120) # azure translate timeout
+            await azure_translate(text_en,f'{i}')
+            time.sleep(100)
 
+    print('translation done')
 
     labeled_docs = []
     for i in range(1,2456):
-        label_obj = await send_request(f'{i}.txt')
-        contents = label_obj[0].replace("\n", " ").replace("\t", " ").replace("\r", " ") # type: ignore
+        label_obj = await send_request(f'{os.getcwd()}/data_src/{i}.txt')
+        contents = label_obj[0] # type: ignore
         labels: list = label_obj[1]  # type: ignore
         formatted_labels = format_entities(contents,labels,i)
         labeled_docs.append(formatted_labels)
     with open(f'{os.getcwd()}/labels_final.json', 'w') as jsonfile:
         jsonfile.write(json.dumps(labeled_docs))
+
+    print('en labeling done')
+
+    for i in range(1,2456):
+        label_obj = await send_request(f'{os.getcwd()}/data_cs/{i}.txt')
+        contents = label_obj[0] # type: ignore
+        labels: list = label_obj[1]  # type: ignore
+        formatted_labels = format_entities(contents,labels,i)
+        labeled_docs.append(formatted_labels)
+    with open(f'{os.getcwd()}/labels_czech.json', 'w') as jsonfile:
+        jsonfile.write(json.dumps(labeled_docs))
+
+    print('cs labeling done')
    
 
 asyncio.run(main())
