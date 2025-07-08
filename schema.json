@@ -1,0 +1,14 @@
+[
+    {
+        "id": "int",
+        "content" : "str",
+        "labels": [
+            {
+                "start": "int",
+                "end": "int",
+                "label": "str",
+                "value": "str"
+            }
+        ]
+    }
+]

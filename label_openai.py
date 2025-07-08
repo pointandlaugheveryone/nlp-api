@@ -1,10 +1,9 @@
 from openai import AzureOpenAI
 import azure.keyvault.secrets as azk
 from azure.identity import DefaultAzureCredential
-import os, asyncio, json, time
+import os, asyncio, json
 from data_models import Labels
 from label_models import Label, Document
-from translate import azure_translate
 
 
 def get_key(keyname):
@@ -85,8 +84,7 @@ async def main():
         labeled_docs.append(formatted_labels)
     with open(f'{os.getcwd()}/labels_en.json', 'w') as jsonfile:
         jsonfile.write(json.dumps(labeled_docs))
-
-    print('en labeling done')
+        
 
     for i in range(1,572):
         label_obj = await send_request(f'{os.getcwd()}/data_cs/{i}.txt')
@@ -94,10 +92,11 @@ async def main():
         labels: list = label_obj[1]  # type: ignore
         formatted_labels = format_entities(contents,labels,i)
         labeled_docs.append(formatted_labels)
-    with open(f'{os.getcwd()}/labels_czech.json', 'w') as jsonfile:
+        if i % 10 == 0:
+            with open(f'{os.getcwd()}/labels_to_{i}.json', 'w') as jsonfile:
+                jsonfile.write(json.dumps(labeled_docs))
+    with open(f'{os.getcwd()}/data_cs/labels_czech.json', 'w') as jsonfile:
         jsonfile.write(json.dumps(labeled_docs))
 
-    print('cs labeling done')
-   
 
 asyncio.run(main())
