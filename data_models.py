@@ -4,7 +4,7 @@ from pydantic import BaseModel, Field
 
 class Entity(BaseModel):
    text:str = Field()
-   type: Literal["SOFT_SKILL","CAPABILITY","PERSONALITY_TRAIT","JOB_TITLE"]
+   type: Literal["SOFT_SKILL","CAPABILITY","PERSONALITY_TRAIT","JOB_TITLE","EDUCATION","HOBBY","INSTITUTION"]
 
 
 class Labels(BaseModel):

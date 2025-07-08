@@ -2,7 +2,7 @@ from openai import AzureOpenAI
 import azure.keyvault.secrets as azk
 from azure.identity import DefaultAzureCredential
 import os, asyncio, json, time
-from data_models2 import Labels
+from data_models import Labels
 from label_models import Label, Document
 from translate import azure_translate
 
@@ -76,15 +76,6 @@ def format_entities(doc_contents:str,labels_list:list,doc_id:int=0):
     
 
 async def main():
-        #TODO:delete section before
-    for i in range(342,2456):
-        with open(f'{os.getcwd()}/data_src/{i}.txt','r') as f:
-            text_en = f.read()
-            await azure_translate(text_en,f'{i}')
-            time.sleep(100)
-
-    print('translation done')
-
     labeled_docs = []
     for i in range(1,2456):
         label_obj = await send_request(f'{os.getcwd()}/data_src/{i}.txt')
@@ -92,12 +83,12 @@ async def main():
         labels: list = label_obj[1]  # type: ignore
         formatted_labels = format_entities(contents,labels,i)
         labeled_docs.append(formatted_labels)
-    with open(f'{os.getcwd()}/labels_final.json', 'w') as jsonfile:
+    with open(f'{os.getcwd()}/labels_en.json', 'w') as jsonfile:
         jsonfile.write(json.dumps(labeled_docs))
 
     print('en labeling done')
 
-    for i in range(1,2456):
+    for i in range(1,572):
         label_obj = await send_request(f'{os.getcwd()}/data_cs/{i}.txt')
         contents = label_obj[0] # type: ignore
         labels: list = label_obj[1]  # type: ignore
